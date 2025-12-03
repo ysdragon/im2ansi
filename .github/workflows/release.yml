@@ -98,8 +98,8 @@ jobs:
         include:
           - os: macos-15
             arch: arm64
-          # - os: macos-13
-          #   arch: x86_64
+          - os: macos-15-intel
+            arch: x86_64
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -169,8 +169,8 @@ jobs:
           cp artifacts/im2ansi-linux-arm64/im2ansi-linux-aarch64.rpm release/
           (cd artifacts/im2ansi-macos-arm64/target/macosx && zip -r ../../../../release/im2ansi-macos-arm64.zip bin lib)
           cp artifacts/im2ansi-macos-arm64/im2ansi-macos-arm64.dmg release/
-          # (cd artifacts/im2ansi-macos-x86_64/target/macosx && zip -r ../../../../release/im2ansi-macos-x86_64.zip bin lib)
-          # cp artifacts/im2ansi-macos-x86_64/im2ansi-macos-x86_64.dmg release/
+          (cd artifacts/im2ansi-macos-x86_64/target/macosx && zip -r ../../../../release/im2ansi-macos-x86_64.zip bin lib)
+          cp artifacts/im2ansi-macos-x86_64/im2ansi-macos-x86_64.dmg release/
           (cd artifacts/im2ansi-windows && zip -r ../../release/im2ansi-windows-x64.zip *)
 
       - name: Create Release
