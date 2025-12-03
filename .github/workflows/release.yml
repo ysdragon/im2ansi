@@ -1,0 +1,180 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            deb_arch: amd64
+            rpm_arch: x86_64
+            artifact_suffix: amd64
+          - os: ubuntu-24.04-arm64
+            deb_arch: arm64
+            rpm_arch: aarch64
+            artifact_suffix: arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ring
+        uses: ysdragon/ring-action@v1.2.3
+        with:
+          file: im2ansi.ring
+          ring_packages: ringstbimage ringfastpro
+          args: -dist -stbimage -fastpro
+          output_exe: "true"
+
+      - name: Prepare artifact
+        run: sudo chmod +x target/linux/dist_using_scripts/bin/im2ansi
+
+      - name: Build .deb package
+        run: |
+          mkdir -p deb-pkg/DEBIAN
+          mkdir -p deb-pkg/usr/bin
+          mkdir -p deb-pkg/usr/lib/im2ansi
+          cp target/linux/dist_using_scripts/bin/im2ansi deb-pkg/usr/bin/
+          cp -r target/linux/dist_using_scripts/lib/* deb-pkg/usr/lib/im2ansi/
+          cat > deb-pkg/DEBIAN/control << 'EOF'
+          Package: im2ansi
+          Version: ${GITHUB_REF_NAME#v}
+          Section: graphics
+          Priority: optional
+          Architecture: ${{ matrix.deb_arch }}
+          Maintainer: ysdragon
+          Description: Convert images to ANSI art
+          EOF
+          sed -i "s/\${GITHUB_REF_NAME#v}/$(echo ${GITHUB_REF_NAME} | sed 's/^v//' | grep -E '^[0-9]' || echo '1.0.0')/" deb-pkg/DEBIAN/control
+          dpkg-deb --build deb-pkg im2ansi-linux-${{ matrix.deb_arch }}.deb
+
+      - name: Build .rpm package
+        run: |
+          sudo apt-get update && sudo apt-get install -y rpm
+          mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          mkdir -p rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/bin
+          mkdir -p rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/lib/im2ansi
+          cp target/linux/dist_using_scripts/bin/im2ansi rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/bin/
+          cp -r target/linux/dist_using_scripts/lib/* rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/lib/im2ansi/
+          cat > rpmbuild/SPECS/im2ansi.spec << 'EOF'
+          Name: im2ansi
+          Version: 1.0.0
+          Release: 1
+          Summary: Convert images to ANSI art
+          License: MIT
+          BuildArch: ${{ matrix.rpm_arch }}
+          
+          %description
+          Convert images to ANSI art
+          
+          %files
+          /usr/bin/im2ansi
+          /usr/lib/im2ansi/*
+          EOF
+          rpmbuild --define "_topdir $(pwd)/rpmbuild" -bb rpmbuild/SPECS/im2ansi.spec
+          cp rpmbuild/RPMS/${{ matrix.rpm_arch }}/*.rpm im2ansi-linux-${{ matrix.rpm_arch }}.rpm
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: im2ansi-linux-${{ matrix.artifact_suffix }}
+          path: |
+            target/linux/dist_using_scripts/bin
+            target/linux/dist_using_scripts/lib
+            im2ansi-linux-${{ matrix.deb_arch }}.deb
+            im2ansi-linux-${{ matrix.rpm_arch }}.rpm
+
+  build-macos:
+    strategy:
+      matrix:
+        include:
+          - os: macos-15
+            arch: arm64
+          - os: macos-13
+            arch: x86_64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ring
+        uses: ysdragon/ring-action@v1.2.3
+        with:
+          file: im2ansi.ring
+          ring_packages: ringstbimage ringfastpro
+          args: -dist -stbimage -fastpro
+          output_exe: "true"
+
+      - name: Prepare artifact
+        run: chmod +x target/macosx/bin/im2ansi
+
+      - name: Create DMG
+        run: hdiutil create -volname "im2ansi" -srcfolder target/macosx -ov -format UDZO im2ansi-macos-${{ matrix.arch }}.dmg
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: im2ansi-macos-${{ matrix.arch }}
+          path: |
+            target/macosx/bin
+            target/macosx/lib
+            im2ansi-macos-${{ matrix.arch }}.dmg
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ring
+        uses: ysdragon/ring-action@v1.2.3
+        with:
+          file: im2ansi.ring
+          ring_packages: ringstbimage ringfastpro
+          args: -dist -stbimage -fastpro
+          output_exe: "true"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: im2ansi-windows
+          path: target/windows/
+
+  release:
+    needs: [build-linux, build-macos, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare release files
+        run: |
+          ls -R artifacts
+          mkdir release
+          (cd artifacts/im2ansi-linux-amd64/target/linux/dist_using_scripts && zip -r ../../../../../release/im2ansi-linux-amd64.zip bin lib)
+          cp artifacts/im2ansi-linux-amd64/im2ansi-linux-amd64.deb release/
+          cp artifacts/im2ansi-linux-amd64/im2ansi-linux-x86_64.rpm release/
+          (cd artifacts/im2ansi-linux-arm64/target/linux/dist_using_scripts && zip -r ../../../../../release/im2ansi-linux-arm64.zip bin lib)
+          cp artifacts/im2ansi-linux-arm64/im2ansi-linux-arm64.deb release/
+          cp artifacts/im2ansi-linux-arm64/im2ansi-linux-aarch64.rpm release/
+          (cd artifacts/im2ansi-macos-arm64 && zip -r ../../release/im2ansi-macos-arm64.zip bin lib)
+          cp artifacts/im2ansi-macos-arm64/im2ansi-macos-arm64.dmg release/
+          (cd artifacts/im2ansi-macos-x86_64 && zip -r ../../release/im2ansi-macos-x86_64.zip bin lib)
+          cp artifacts/im2ansi-macos-x86_64/im2ansi-macos-x86_64.dmg release/
+          (cd artifacts/im2ansi-windows && zip -r ../../release/im2ansi-windows-x64.zip *)
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*
+          generate_release_notes: true
