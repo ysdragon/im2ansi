@@ -53,20 +53,20 @@ jobs:
           Maintainer: ysdragon
           Description: Convert images to ANSI art
           EOF
-          sed -i "s/\${GITHUB_REF_NAME#v}/$(echo ${GITHUB_REF_NAME} | sed 's/^v//' | grep -E '^[0-9]' || echo '1.0.0')/" deb-pkg/DEBIAN/control
+          sed -i "s/\${GITHUB_REF_NAME#v}/$(echo ${GITHUB_REF_NAME} | sed 's/^v//' | grep -E '^[0-9]' || echo '1.0.1')/" deb-pkg/DEBIAN/control
           dpkg-deb --build deb-pkg im2ansi-linux-${{ matrix.deb_arch }}.deb
 
       - name: Build .rpm package
         run: |
           sudo apt-get update && sudo apt-get install -y rpm
           mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          mkdir -p rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/bin
-          mkdir -p rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/lib
-          cp target/linux/dist_using_scripts/bin/im2ansi rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/bin/
-          cp -r target/linux/dist_using_scripts/lib/* rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/lib/
+          mkdir -p rpmbuild/BUILDROOT/im2ansi-1.0.1-1.${{ matrix.rpm_arch }}/usr/bin
+          mkdir -p rpmbuild/BUILDROOT/im2ansi-1.0.1-1.${{ matrix.rpm_arch }}/usr/lib
+          cp target/linux/dist_using_scripts/bin/im2ansi rpmbuild/BUILDROOT/im2ansi-1.0.1-1.${{ matrix.rpm_arch }}/usr/bin/
+          cp -r target/linux/dist_using_scripts/lib/* rpmbuild/BUILDROOT/im2ansi-1.0.1-1.${{ matrix.rpm_arch }}/usr/lib/
           cat > rpmbuild/SPECS/im2ansi.spec << 'EOF'
           Name: im2ansi
-          Version: 1.0.0
+          Version: 1.0.1
           Release: 1
           Summary: Convert images to ANSI art
           License: MIT
