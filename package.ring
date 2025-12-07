@@ -15,13 +15,18 @@ aPackageInfo = [
 	],
 	:libs = 	[
 		[
+			:name = "ringfastpro",
+			:version = "1.0.5",
+			:providerusername = "ringpackages"
+		],
+		[
 			:name = "ringstbimage",
 			:version = "1.0.12",
 			:providerusername = "ringpackages"
 		],
 		[
-			:name = "ringfastpro",
-			:version = "1.0.5",
+			:name = "ringzip",
+			:version = "1.0.8",
 			:providerusername = "ringpackages"
 		]
 	],
