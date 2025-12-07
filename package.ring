@@ -48,6 +48,7 @@ aPackageInfo = [
 		"src/output/html_writer.ring",
 		"src/output/svg_writer.ring",
 		"src/utils/colors.ring",
+		"src/utils/install.ring",
 		"src/utils/utf8.ring"
 	],
 	:ringfolderfiles = 	[
@@ -95,7 +96,7 @@ aPackageInfo = [
 	:macosrun = "",
 	:ubunturun = "",
 	:fedorarun = "",
-	:setup = "",
+	:setup = "ring src/utils/install.ring",
 	:windowssetup = "",
 	:linuxsetup = "",
 	:macossetup = "",
