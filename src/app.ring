@@ -11,7 +11,6 @@ load "config/constants.ring"
 load "config/argparser.ring"
 
 load "image/loader.ring"
-load "image/pixel.ring"
 load "image/processor.ring"
 load "image/resizer.ring"
 
