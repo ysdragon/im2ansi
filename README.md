@@ -4,7 +4,7 @@
 
 **Convert images into beautiful ANSI/ASCII art**
 
-[ring]: https://img.shields.io/badge/Made_with-Ring-2D54CB?style=for-the-badge
+[ring]: https://img.shields.io/badge/Made_with-Ring-2D54CB?style=for-the-badge&logo=ring&logoColor=C0CAF5&labelColor=414868&color=8c73cc
 [license]: https://img.shields.io/github/license/ysdragon/im2ansi?style=for-the-badge&logo=opensourcehardware&label=License&logoColor=C0CAF5&labelColor=414868&color=8c73cc
 
 [release]: https://img.shields.io/github/v/release/ysdragon/im2ansi?style=for-the-badge&logo=github&logoColor=C0CAF5&labelColor=414868&color=8c73cc
