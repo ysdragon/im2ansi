@@ -89,13 +89,20 @@ jobs:
           rpmbuild --define "_topdir $(pwd)/rpmbuild" -bb rpmbuild/SPECS/im2ansi.spec
           cp rpmbuild/RPMS/${{ matrix.rpm_arch }}/*.rpm im2ansi-linux-${{ matrix.rpm_arch }}.rpm
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Create archives
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          cd target/linux/dist_using_scripts
+          zip -r ../../../im2ansi-linux-${{ matrix.artifact_suffix }}.zip bin lib
+          tar -czvf ../../../im2ansi-linux-${{ matrix.artifact_suffix }}.tar.gz bin lib
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
         with:
-          name: im2ansi-linux-${{ matrix.artifact_suffix }}
-          path: |
-            target/linux/dist_using_scripts/bin
-            target/linux/dist_using_scripts/lib
+          files: |
+            im2ansi-linux-${{ matrix.artifact_suffix }}.zip
+            im2ansi-linux-${{ matrix.artifact_suffix }}.tar.gz
             im2ansi-linux-${{ matrix.deb_arch }}.deb
             im2ansi-linux-${{ matrix.rpm_arch }}.rpm
 
@@ -127,13 +134,20 @@ jobs:
       - name: Create DMG
         run: hdiutil create -volname "im2ansi" -srcfolder target/macosx -ov -format UDZO im2ansi-macos-${{ matrix.arch }}.dmg
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Create archives
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          cd target/macosx
+          zip -r ../../im2ansi-macos-${{ matrix.arch }}.zip bin lib
+          tar -czvf ../../im2ansi-macos-${{ matrix.arch }}.tar.gz bin lib
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
         with:
-          name: im2ansi-macos-${{ matrix.arch }}
-          path: |
-            target/macosx/bin
-            target/macosx/lib
+          files: |
+            im2ansi-macos-${{ matrix.arch }}.zip
+            im2ansi-macos-${{ matrix.arch }}.tar.gz
             im2ansi-macos-${{ matrix.arch }}.dmg
 
   build-windows:
@@ -158,41 +172,12 @@ jobs:
           output_exe: "true"
           arch: ${{ matrix.arch }}
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: im2ansi-windows-${{ matrix.artifact_suffix }}
-          path: target/windows/
+      - name: Create Zip archive
+        if: startsWith(github.ref, 'refs/tags/')
+        run: Compress-Archive -Path target/windows/* -DestinationPath im2ansi-windows-${{ matrix.artifact_suffix }}.zip
 
-  release:
-    needs: [build-linux, build-macos, build-windows]
-    if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Prepare release files
-        run: |
-          ls -R artifacts
-          mkdir release
-          (cd artifacts/im2ansi-linux-amd64/target/linux/dist_using_scripts && zip -r ../../../../../release/im2ansi-linux-amd64.zip bin lib)
-          cp artifacts/im2ansi-linux-amd64/im2ansi-linux-amd64.deb release/
-          cp artifacts/im2ansi-linux-amd64/im2ansi-linux-x86_64.rpm release/
-          (cd artifacts/im2ansi-linux-arm64/target/linux/dist_using_scripts && zip -r ../../../../../release/im2ansi-linux-arm64.zip bin lib)
-          cp artifacts/im2ansi-linux-arm64/im2ansi-linux-arm64.deb release/
-          cp artifacts/im2ansi-linux-arm64/im2ansi-linux-aarch64.rpm release/
-          (cd artifacts/im2ansi-macos-arm64/target/macosx && zip -r ../../../../release/im2ansi-macos-arm64.zip bin lib)
-          cp artifacts/im2ansi-macos-arm64/im2ansi-macos-arm64.dmg release/
-          (cd artifacts/im2ansi-macos-x86_64/target/macosx && zip -r ../../../../release/im2ansi-macos-x86_64.zip bin lib)
-          cp artifacts/im2ansi-macos-x86_64/im2ansi-macos-x86_64.dmg release/
-          (cd artifacts/im2ansi-windows-x64 && zip -r ../../release/im2ansi-windows-x64.zip *)
-          (cd artifacts/im2ansi-windows-x86 && zip -r ../../release/im2ansi-windows-x86.zip *)
-
-      - name: Create Release
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: release/*
-          generate_release_notes: true
+          files: im2ansi-windows-${{ matrix.artifact_suffix }}.zip
