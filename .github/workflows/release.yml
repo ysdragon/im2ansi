@@ -6,6 +6,9 @@ on:
       - master
     tags:
       - 'v*'
+    paths-ignore:
+      - '**/*.md'
+
 
 permissions:
   contents: write
