@@ -46,7 +46,7 @@ func main()
 	if config.seed = 0 
 		config.seed = random(1000000)
 	ok
-	randomize(config.seed)
+	srandom(config.seed)
 
 	# Load image
 	img_result = loadImage(config.path)
