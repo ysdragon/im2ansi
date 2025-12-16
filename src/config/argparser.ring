@@ -74,7 +74,7 @@ func validateConfig(config)
 	# Check if file exists
 	if len(config.path) > 0
 		if not fexists(config.path)
-			see errorMsg("File not found: " + config.path) + nl
+			? errorMsg("File not found: " + config.path)
 			return false
 		ok
 	ok
@@ -82,19 +82,19 @@ func validateConfig(config)
 	# Validate format
 	validFormats = ["ansi", "ascii", "svg", "html"]
 	if not find(validFormats, lower(config.format))
-		see errorMsg("Invalid format '" + config.format + "'. Valid formats: ansi, ascii, svg, html") + nl
+		? errorMsg("Invalid format '" + config.format + "'. Valid formats: ansi, ascii, svg, html")
 		return false
 	ok
 	
 	# Validate size
 	if config.size < 1
-		see errorMsg("Size must be at least 1") + nl
+		? errorMsg("Size must be at least 1")
 		return false
 	ok
 	
 	# Validate ramp index
 	if config.ramp_index < 1 or config.ramp_index > len(ASCII_RAMPS)
-		see errorMsg("Ramp index must be between 1 and " + len(ASCII_RAMPS)) + nl
+		? errorMsg("Ramp index must be between 1 and " + len(ASCII_RAMPS))
 		return false
 	ok
 	
@@ -103,7 +103,7 @@ func validateConfig(config)
 # Display version
 func showVersion()
 	cAppName = getAppName()
-	see bold(brightCyan(cAppName)) + " version " + bold(APP_VERSION) + nl
+	? bold(brightCyan(cAppName)) + " version " + bold(APP_VERSION)
 
 # Display help message
 func showHelp()

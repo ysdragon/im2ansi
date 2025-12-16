@@ -6,7 +6,7 @@ func loadImage(path)
 	cData = stbi_load(path, :img_width, :img_height, :img_channels, 0)
 
 	if cData = NULL
-		see "Error loading image: " + stbi_failure_reason() + nl
+		? "Error loading image: " + stbi_failure_reason()
 		return [NULL, 0, 0, 0]
 	ok
 

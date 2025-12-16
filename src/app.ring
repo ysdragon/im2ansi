@@ -61,8 +61,8 @@ func main()
 
 	# Show image info unless quiet mode
 	if not config.quiet
-		see infoMsg("Loaded image: " + config.path) + nl
-		see infoMsg("Dimensions: " + img_width + "x" + img_height + " (" + img_channels + " channels)") + nl
+		? infoMsg("Loaded image: " + config.path)
+		? infoMsg("Dimensions: " + img_width + "x" + img_height + " (" + img_channels + " channels)")
 	ok
 
 	# Process and resize image
@@ -72,11 +72,11 @@ func main()
 	current_proc_height = proc_result[3]
 
 	if not config.quiet
-		see infoMsg("Output size: " + current_proc_width*2 + "x" + current_proc_height + " characters") + nl
+		? infoMsg("Output size: " + current_proc_width*2 + "x" + current_proc_height + " characters")
 	ok
 
 	if img_channels != 3 and img_channels != 4
-		see errorMsg("Image must be RGB (3 channels) or RGBA (4 channels). Detected: " + img_channels) + nl
+		? errorMsg("Image must be RGB (3 channels) or RGBA (4 channels). Detected: " + img_channels)
 		return
 	ok
 
@@ -94,10 +94,10 @@ func main()
 		on "html"
 			writeHtml(pixels_grid, config.output_file, config.path)
 		other
-			see errorMsg("Invalid format '" + config.format + "'; valid: ansi, ascii, svg, html") + nl
+			? errorMsg("Invalid format '" + config.format + "'; valid: ansi, ascii, svg, html")
 	off
 
 	# Success message
 	if not config.quiet and len(config.output_file) > 0
-		see successMsg("Output saved to: " + config.output_file) + nl
+		? successMsg("Output saved to: " + config.output_file)
 	ok

@@ -8,7 +8,7 @@ func resizeImage(src_cData, src_w, src_h, src_ch, target_w, target_h)
 	
 	expected_src_len = src_w * src_h * src_ch
 	if len_src_cData != expected_src_len
-		? "Error: Source data length (" + len_src_cData + ") does not match dimensions (" + src_w + "x" + src_h + "x" + src_ch + " = " + expected_src_len + ")." + nl
+		? "Error: Source data length (" + len_src_cData + ") does not match dimensions (" + src_w + "x" + src_h + "x" + src_ch + " = " + expected_src_len + ")."
 		return NULL
 	ok
 
