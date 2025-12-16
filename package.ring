@@ -15,6 +15,11 @@ aPackageInfo = [
 	],
 	:libs = 	[
 		[
+			:name = "ringcurl",
+			:version = "1.0.18",
+			:providerusername = "ringpackages"
+		],
+		[
 			:name = "ringfastpro",
 			:version = "1.0.5",
 			:providerusername = "ringpackages"
@@ -28,6 +33,11 @@ aPackageInfo = [
 			:name = "ringzip",
 			:version = "1.0.8",
 			:providerusername = "ringpackages"
+		],
+		[
+			:name = "simplejson",
+			:version = "1.0.0",
+			:providerusername = "ysdragon"
 		]
 	],
 	:files = 	[
