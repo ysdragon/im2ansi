@@ -1,5 +1,3 @@
-load "stbimage.ring"
-
 # Load an image from file and return image data with dimensions
 func loadImage(path)
 	img_width = 0

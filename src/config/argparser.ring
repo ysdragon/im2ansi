@@ -1,7 +1,3 @@
-load "constants.ring"
-load "stdlibcore.ring"
-load "../utils/colors.ring"
-
 # Get app name based on compiled status
 func getAppName()
 	if isAppCompiled()

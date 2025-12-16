@@ -1,8 +1,23 @@
 # Main application entry point
+
+# Load Libraries
+load "fastpro.ring"
+load "stbimage.ring"
+load "stdlibcore.ring"
+
+# Load scripts
 load "config/config.ring"
+load "config/constants.ring"
 load "config/argparser.ring"
+
 load "image/loader.ring"
+load "image/pixel.ring"
 load "image/processor.ring"
+load "image/resizer.ring"
+
+load "utils/utf8.ring"
+load "utils/colors.ring"
+
 load "output/ansi_writer.ring"
 load "output/svg_writer.ring"
 load "output/html_writer.ring"

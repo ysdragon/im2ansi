@@ -1,9 +1,3 @@
-load "fastpro.ring"
-load "pixel.ring"
-load "resizer.ring"
-load "../config/constants.ring"
-load "../utils/utf8.ring"
-
 # Channel indices
 R_COL = 1
 G_COL = 2
