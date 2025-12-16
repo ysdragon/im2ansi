@@ -119,6 +119,7 @@ jobs:
           ring_packages: ringstbimage ringfastpro
           args: -dist -stbimage -fastpro
           output_exe: "true"
+          cache: ${{ matrix.os != 'macos-15-intel' }}
 
       - name: Prepare artifact
         run: chmod +x target/macosx/bin/im2ansi
