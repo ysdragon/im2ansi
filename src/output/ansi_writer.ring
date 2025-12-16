@@ -7,11 +7,11 @@ func writeAnsi(pixels, output_file, no_color)
 	ansi_output = ""
 	for row in pixels
 		line_str = ""
-		for pixel_obj in row
+		for pixel in row
 			if no_color
-				line_str += string(pixel_obj.character)
+				line_str += string(pixel[PIXEL_CHAR])
 			else
-				line_str += formatRgbAnsi(pixel_obj.color_r, pixel_obj.color_g, pixel_obj.color_b, string(pixel_obj.character))
+				line_str += formatRgbAnsi(pixel[PIXEL_R], pixel[PIXEL_G], pixel[PIXEL_B], string(pixel[PIXEL_CHAR]))
 			ok
 		next
 		ansi_output += line_str + nl

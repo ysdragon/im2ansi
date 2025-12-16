@@ -14,8 +14,9 @@ load "image/loader.ring"
 load "image/processor.ring"
 load "image/resizer.ring"
 
-load "utils/utf8.ring"
 load "utils/colors.ring"
+load "utils/helpers.ring"
+load "utils/utf8.ring"
 
 load "output/ansi_writer.ring"
 load "output/svg_writer.ring"

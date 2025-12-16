@@ -20,16 +20,16 @@ func writeHtml(pixels, output_file, title)
 	
 	for row in pixels
 		line_str = ""
-		for pixel_obj in row
-			hex_color = rgbToHex(pixel_obj.color_r, pixel_obj.color_g, pixel_obj.color_b)
-			char_to_write = string(pixel_obj.character)
+		for pixel in row
+			hex_color = rgbToHex(pixel[PIXEL_R], pixel[PIXEL_G], pixel[PIXEL_B])
+			char_to_write = string(pixel[PIXEL_CHAR])
 			if char_to_write = " "
 				char_to_write = "&nbsp;"
-			elseif char_to_write = "<"
+			but char_to_write = "<"
 				char_to_write = "&lt;"
-			elseif char_to_write = ">"
+			but char_to_write = ">"
 				char_to_write = "&gt;"
-			elseif char_to_write = "&"
+			but char_to_write = "&"
 				char_to_write = "&amp;"
 			ok
 			line_str += '<span style="color:#' + hex_color + '">' + char_to_write + '</span>'
@@ -50,14 +50,3 @@ func writeHtml(pixels, output_file, title)
 		next
 	ok
 	return 0
-
-# Convert RGB to hex color
-func rgbToHex(r, g, b)
-	return padHex(r) + padHex(g) + padHex(b)
-
-func padHex(n)
-	h = hex(n)
-	if len(h) = 1
-		return "0" + h
-	ok
-	return h
