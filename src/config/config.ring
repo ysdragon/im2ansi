@@ -1,5 +1,5 @@
 # Configuration class for the application
-APP_VERSION = "1.0.6"
+APP_VERSION = "1.0.7"
 
 class Config
 	path = ""
